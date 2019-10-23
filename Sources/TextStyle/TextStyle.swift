@@ -1,7 +1,7 @@
 import UIKit
 
 @dynamicMemberLookup
-public struct TextStyle {
+public struct TextStyle: Equatable {
 
     static let defaultParagraphStyle = NSMutableParagraphStyle()
 
@@ -26,6 +26,10 @@ public struct TextStyle {
             return _attributes
         }
     }
+    
+    public static func == (lhs: TextStyle, rhs: TextStyle) -> Bool {
+        return (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes)
+    }
 }
 
 // MARK: Attributes
@@ -34,8 +38,14 @@ public extension TextStyle {
 
     @inlinable
     subscript<T>(key: NSAttributedString.Key) -> T? {
-        get { _attributes[key] as? T }
-        set { _attributes[key] = newValue }
+        get {
+            assert(key != .paragraphStyle, "Please use the `.paragraphStyle` property directly.")
+            return _attributes[key] as? T
+        }
+        set {
+            assert(key != .paragraphStyle, "Please use the `.paragraphStyle` property directly.")
+            _attributes[key] = newValue
+        }
     }
 
     var font: UIFont? {
