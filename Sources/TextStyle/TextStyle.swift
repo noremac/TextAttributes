@@ -1,4 +1,14 @@
+#if canImport(UIKit)
 import UIKit
+public typealias TextStyleFont = UIFont
+public typealias TextStyleColor = UIColor
+#elseif canImport(AppKit)
+import AppKit
+public typealias TextStyleFont = NSFont
+public typealias TextStyleColor = NSColor
+#else
+#error("unsupported platform")
+#endif
 
 @dynamicMemberLookup
 public struct TextStyle {
@@ -21,32 +31,44 @@ public struct TextStyle {
 // MARK: Equatable
 
 extension TextStyle: Equatable {
-
     public static func == (lhs: TextStyle, rhs: TextStyle) -> Bool {
-        return (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes)
+        (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes)
     }
 }
 
 public extension TextStyle {
-
     // MARK: Attributes
 
+    /// Set the given attribute for the given key.
+    /// - Parameters:
+    ///   - attribute: The attribute.
+    ///   - key: The key.
+    /// - Note: Prefer the type safe proprties. Only use this for instances
+    /// where Apple has added a new property that this library does not yet
+    /// support.
+    mutating func setAttribute(_ attribute: Any?, forKey key: NSAttributedString.Key) {
+        assert(key != .paragraphStyle, "Please use the paragraph style property")
+        _attributes[key] = attribute
+    }
+
+    func attribute(forKey key: NSAttributedString.Key) -> Any? {
+        if key == .paragraphStyle {
+            return _paragraphStyle?.copy() as? NSParagraphStyle
+        } else {
+            return _attributes[key]
+        }
+    }
+
     @inlinable
-    subscript<T>(key: NSAttributedString.Key) -> T? {
-        get {
-            assert(key != .paragraphStyle, "Please use the `.paragraphStyle` property directly.")
-            return _attributes[key] as? T
-        }
-        set {
-            assert(key != .paragraphStyle, "Please use the `.paragraphStyle` property directly.")
-            _attributes[key] = newValue
-        }
+    internal subscript<T>(key: NSAttributedString.Key) -> T? {
+        get { _attributes[key] as? T }
+        set { _attributes[key] = newValue }
     }
 
     var attributes: [NSAttributedString.Key: Any] {
         if let style = paragraphStyle {
             var attributess = _attributes
-            attributess[.paragraphStyle] = style
+            attributess[.paragraphStyle] = style.copy()
             return attributess
         } else {
             return _attributes
@@ -55,21 +77,21 @@ public extension TextStyle {
 
     // MARK: Font
 
-    var font: UIFont? {
+    var font: TextStyleFont? {
         get { self[.font] }
         set { self[.font] = newValue }
     }
 
     // MARK: Foreground color
 
-    var foregroundColor: UIColor? {
+    var foregroundColor: TextStyleColor? {
         get { self[.foregroundColor] }
         set { self[.foregroundColor] = newValue }
     }
 
     // MARK: Background color
 
-    var backgroundColor: UIColor? {
+    var backgroundColor: TextStyleColor? {
         get { self[.backgroundColor] }
         set { self[.backgroundColor] = newValue }
     }
@@ -97,7 +119,7 @@ public extension TextStyle {
 
     // MARK: Strikethrough color
 
-    var strikethroughColor: UIColor? {
+    var strikethroughColor: TextStyleColor? {
         get { self[.strikethroughColor] }
         set { self[.strikethroughColor] = newValue }
     }
@@ -111,14 +133,14 @@ public extension TextStyle {
 
     // MARK: Underline color
 
-    var underlineColor: UIColor? {
+    var underlineColor: TextStyleColor? {
         get { self[.underlineColor] }
         set { self[.underlineColor] = newValue }
     }
 
     // MARK: Stroke color
 
-    var strokeColor: UIColor? {
+    var strokeColor: TextStyleColor? {
         get { self[.strokeColor] }
         set { self[.strokeColor] = newValue }
     }
@@ -192,9 +214,6 @@ public extension TextStyle {
         get { self[.verticalGlyphForm] }
         set { self[.verticalGlyphForm] = newValue }
     }
-}
-
-public extension TextStyle {
 
     // MARK: Paragraph style
 
@@ -225,8 +244,7 @@ public extension TextStyle {
 // MARK: String
 
 public extension String {
-
     func attributedString(withStyle style: TextStyle) -> NSAttributedString {
-        return .init(string: self, attributes: style.attributes)
+        NSAttributedString(string: self, attributes: style.attributes)
     }
 }
