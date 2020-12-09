@@ -166,12 +166,14 @@ public extension TextStyle {
         set { self[.textEffect] = newValue }
     }
 
+    #if !os(watchOS)
     // MARK: Attachment
 
     var attachment: NSTextAttachment? {
         get { self[.attachment] }
         set { self[.attachment] = newValue }
     }
+    #endif
 
     // MARK: Link
 

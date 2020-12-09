@@ -13,7 +13,7 @@ final class TextStyleTests: XCTestCase {
         XCTAssert(s1.lineSpacing == 300)
         XCTAssert(s2.lineSpacing == 200)
     }
-    
+
     func testEqualityNSDictionaryAssumptions() {
         XCTAssertEqual(TextStyle(), TextStyle())
         XCTAssertEqual(TextStyle { $0.lineSpacing = 2 }, TextStyle { $0.lineSpacing = 2 })
