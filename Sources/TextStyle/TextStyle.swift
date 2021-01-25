@@ -1,13 +1,25 @@
+#if canImport(UIKit)
 import UIKit
+public typealias TextStyleFont = UIFont
+public typealias TextStyleColor = UIColor
+#elseif canImport(AppKit)
+import AppKit
+public typealias TextStyleFont = NSFont
+public typealias TextStyleColor = NSColor
+#else
+#error("unsupported platform")
+#endif
 
 @dynamicMemberLookup
 public struct TextStyle {
 
     static let defaultParagraphStyle = NSMutableParagraphStyle()
 
+    @usableFromInline
     var _paragraphStyle: NSMutableParagraphStyle!
 
-    @usableFromInline var _attributes: [NSAttributedString.Key: Any] = [:]
+    @usableFromInline
+    var _attributes: [NSAttributedString.Key: Any] = [:]
 
     // MARK: Initializers
 
@@ -21,32 +33,47 @@ public struct TextStyle {
 // MARK: Equatable
 
 extension TextStyle: Equatable {
-
     public static func == (lhs: TextStyle, rhs: TextStyle) -> Bool {
-        return (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes)
+        (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes)
     }
 }
 
 public extension TextStyle {
-
     // MARK: Attributes
 
+    /// Set the given attribute for the given key.
+    /// - Parameters:
+    ///   - attribute: The attribute.
+    ///   - key: The key.
+    /// - Note: Prefer the type safe proprties. Only use this for instances
+    /// where Apple has added a new property that this library does not yet
+    /// support.
     @inlinable
-    subscript<T>(key: NSAttributedString.Key) -> T? {
-        get {
-            assert(key != .paragraphStyle, "Please use the `.paragraphStyle` property directly.")
-            return _attributes[key] as? T
-        }
-        set {
-            assert(key != .paragraphStyle, "Please use the `.paragraphStyle` property directly.")
-            _attributes[key] = newValue
+    mutating func setAttribute(_ attribute: Any?, forKey key: NSAttributedString.Key) {
+        assert(key != .paragraphStyle, "Please use the paragraph style property")
+        _attributes[key] = attribute
+    }
+
+    @inlinable
+    func attribute(forKey key: NSAttributedString.Key) -> Any? {
+        if key == .paragraphStyle {
+            return _paragraphStyle?.copy() as? NSParagraphStyle
+        } else {
+            return _attributes[key]
         }
     }
 
+    @inlinable
+    internal subscript<T>(key: NSAttributedString.Key) -> T? {
+        get { _attributes[key] as? T }
+        set { _attributes[key] = newValue }
+    }
+
+    @inlinable
     var attributes: [NSAttributedString.Key: Any] {
         if let style = paragraphStyle {
             var attributess = _attributes
-            attributess[.paragraphStyle] = style
+            attributess[.paragraphStyle] = style.copy()
             return attributess
         } else {
             return _attributes
@@ -55,27 +82,31 @@ public extension TextStyle {
 
     // MARK: Font
 
-    var font: UIFont? {
+    @inlinable
+    var font: TextStyleFont? {
         get { self[.font] }
         set { self[.font] = newValue }
     }
 
     // MARK: Foreground color
 
-    var foregroundColor: UIColor? {
+    @inlinable
+    var foregroundColor: TextStyleColor? {
         get { self[.foregroundColor] }
         set { self[.foregroundColor] = newValue }
     }
 
     // MARK: Background color
 
-    var backgroundColor: UIColor? {
+    @inlinable
+    var backgroundColor: TextStyleColor? {
         get { self[.backgroundColor] }
         set { self[.backgroundColor] = newValue }
     }
 
     // MARK: Ligature
 
+    @inlinable
     var ligature: Int? {
         get { self[.ligature] }
         set { self[.ligature] = newValue }
@@ -83,6 +114,7 @@ public extension TextStyle {
 
     // MARK: Kern
 
+    @inlinable
     var kern: CGFloat? {
         get { self[.kern] }
         set { self[.kern] = newValue }
@@ -90,6 +122,7 @@ public extension TextStyle {
 
     // MARK: Strikethrough style
 
+    @inlinable
     var strikethroughStyle: NSUnderlineStyle? {
         get { self[.strikethroughStyle] }
         set { self[.strikethroughStyle] = newValue }
@@ -97,13 +130,15 @@ public extension TextStyle {
 
     // MARK: Strikethrough color
 
-    var strikethroughColor: UIColor? {
+    @inlinable
+    var strikethroughColor: TextStyleColor? {
         get { self[.strikethroughColor] }
         set { self[.strikethroughColor] = newValue }
     }
 
     // MARK: Underline style
 
+    @inlinable
     var underlineStyle: NSUnderlineStyle? {
         get { self[.underlineStyle] }
         set { self[.underlineStyle] = newValue }
@@ -111,20 +146,23 @@ public extension TextStyle {
 
     // MARK: Underline color
 
-    var underlineColor: UIColor? {
+    @inlinable
+    var underlineColor: TextStyleColor? {
         get { self[.underlineColor] }
         set { self[.underlineColor] = newValue }
     }
 
     // MARK: Stroke color
 
-    var strokeColor: UIColor? {
+    @inlinable
+    var strokeColor: TextStyleColor? {
         get { self[.strokeColor] }
         set { self[.strokeColor] = newValue }
     }
 
     // MARK: Stroke width
 
+    @inlinable
     var strokeWidth: CGFloat? {
         get { self[.strokeWidth] }
         set { self[.strokeWidth] = newValue }
@@ -132,6 +170,7 @@ public extension TextStyle {
 
     // MARK: Shadow
 
+    @inlinable
     var shadow: NSShadow? {
         get { self[.shadow] }
         set { self[.shadow] = newValue }
@@ -139,20 +178,25 @@ public extension TextStyle {
 
     // MARK: Text effect
 
+    @inlinable
     var textEffect: NSAttributedString.TextEffectStyle? {
         get { self[.textEffect] }
         set { self[.textEffect] = newValue }
     }
 
+    #if !os(watchOS)
     // MARK: Attachment
 
+    @inlinable
     var attachment: NSTextAttachment? {
         get { self[.attachment] }
         set { self[.attachment] = newValue }
     }
+    #endif
 
     // MARK: Link
 
+    @inlinable
     var link: URL? {
         get { self[.link] }
         set { self[.link] = newValue }
@@ -160,6 +204,7 @@ public extension TextStyle {
 
     // MARK: Baseline offset
 
+    @inlinable
     var baselineOffset: CGFloat? {
         get { self[.baselineOffset] }
         set { self[.baselineOffset] = newValue }
@@ -167,6 +212,7 @@ public extension TextStyle {
 
     // MARK: Obliqueness
 
+    @inlinable
     var obliqueness: CGFloat? {
         get { self[.obliqueness] }
         set { self[.obliqueness] = newValue }
@@ -174,6 +220,7 @@ public extension TextStyle {
 
     // MARK: Expansion
 
+    @inlinable
     var expansion: CGFloat? {
         get { self[.expansion] }
         set { self[.expansion] = newValue }
@@ -181,6 +228,7 @@ public extension TextStyle {
 
     // MARK: Writing direction
 
+    @inlinable
     var writingDirection: [NSWritingDirection]? {
         get { self[.writingDirection] }
         set { self[.writingDirection] = newValue }
@@ -188,19 +236,18 @@ public extension TextStyle {
 
     // MARK: Vertical glyph form
 
+    @inlinable
     var verticalGlyphForm: Int? {
         get { self[.verticalGlyphForm] }
         set { self[.verticalGlyphForm] = newValue }
     }
-}
-
-public extension TextStyle {
 
     // MARK: Paragraph style
 
     /// The paragraph style. New values will be copied upon being set.
     /// - Note: Prefer to use the specific properties on `TextStyle` for manipulating the paragraph
     /// style attributes; this property will override those values.
+    @inlinable
     var paragraphStyle: NSParagraphStyle? {
         get { _paragraphStyle?.copy() as? NSParagraphStyle }
         set { _paragraphStyle = newValue?.mutableCopy() as? NSMutableParagraphStyle }
@@ -225,8 +272,21 @@ public extension TextStyle {
 // MARK: String
 
 public extension String {
-
     func attributedString(withStyle style: TextStyle) -> NSAttributedString {
-        return .init(string: self, attributes: style.attributes)
+        NSAttributedString(string: self, attributes: style.attributes)
+    }
+
+    func mutableAttributedString(withStyle style: TextStyle) -> NSMutableAttributedString {
+        NSMutableAttributedString(string: self, attributes: style.attributes)
+    }
+}
+
+public extension TextStyle {
+    func attributedString(from string: String) -> NSAttributedString {
+        NSAttributedString(string: string, attributes: attributes)
+    }
+
+    func mutableAttributedString(from string: String) -> NSMutableAttributedString {
+        NSMutableAttributedString(string: string, attributes: attributes)
     }
 }
