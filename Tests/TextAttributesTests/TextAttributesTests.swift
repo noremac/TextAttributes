@@ -1,7 +1,7 @@
 import TextAttributes
 import XCTest
 
-final class TextStyleTests: XCTestCase {
+final class TextAttributesTests: XCTestCase {
     func testParagraphStyleHasValueSemantics() {
         var s1 = TextAttributes()
         s1.lineSpacing = 100
