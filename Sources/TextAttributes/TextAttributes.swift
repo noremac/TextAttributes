@@ -14,7 +14,7 @@ public typealias TextStyleColor = NSColor
 public struct TextAttributes {
     static let defaultParagraphStyle = NSMutableParagraphStyle()
 
-    var _paragraphStyle: NSMutableParagraphStyle!
+    var _paragraphStyle🐮: CowHelper<NSMutableParagraphStyle>!
 
     var _attributes: [NSAttributedString.Key: Any] = [:]
 
@@ -45,7 +45,6 @@ public extension TextAttributes {
     /// - Note: Prefer the type safe properties. Only use this for instances
     /// where Apple has added a new property that this library does not yet
     /// support.
-
     mutating func setAttribute(_ attribute: Any?, forKey key: NSAttributedString.Key) {
         assert(key != .paragraphStyle, "Please use the paragraph style property")
         _attributes[key] = attribute
@@ -53,7 +52,7 @@ public extension TextAttributes {
 
     func attribute(forKey key: NSAttributedString.Key) -> Any? {
         if key == .paragraphStyle {
-            return _paragraphStyle?.copy() as? NSParagraphStyle
+            return paragraphStyle
         } else {
             return _attributes[key]
         }
@@ -220,26 +219,40 @@ public extension TextAttributes {
     // MARK: Paragraph style
 
     /// The paragraph style. New values will be copied upon being set.
-    /// - Note: Prefer to use the specific properties on `TextStyle` for manipulating the paragraph
-    /// style attributes; this property will override those values.
-
+    /// - Note: Prefer to use the specific properties on ``TextAttributes`` for
+    /// manipulating the paragraph style attributes; this property will override
+    /// those values.
     var paragraphStyle: NSParagraphStyle? {
-        get { _paragraphStyle?.copy() as? NSParagraphStyle }
-        set { _paragraphStyle = newValue?.mutableCopy() as? NSMutableParagraphStyle }
-    }
+            get {
+                // Defensively copy out the value.
+                _paragraphStyle🐮?.value.copy() as? NSParagraphStyle
+            }
+            set {
+                if let value = newValue {
+                    // Defensively copy in the new value.
+                    _paragraphStyle🐮 = CowHelper(value.mutableCopy() as! NSMutableParagraphStyle)
+                } else {
+                    _paragraphStyle🐮 = nil
+                }
+            }
+        }
 
     subscript<T>(dynamicMember keyPath: WritableKeyPath<NSMutableParagraphStyle, T>) -> T {
         get {
-            (_paragraphStyle ?? Self.defaultParagraphStyle)[keyPath: keyPath]
+            (_paragraphStyle🐮?.value ?? Self.defaultParagraphStyle)[keyPath: keyPath]
         }
         set {
-            if _paragraphStyle == nil {
-                _paragraphStyle = .init()
-            } else if !isKnownUniquelyReferenced(&_paragraphStyle) {
-                let style = _paragraphStyle.mutableCopy() as! NSMutableParagraphStyle
-                _paragraphStyle = style
+            if _paragraphStyle🐮 == nil {
+                // It's not been set yet, create it.
+                _paragraphStyle🐮 = CowHelper(NSMutableParagraphStyle())
+            } else if !isKnownUniquelyReferenced(&_paragraphStyle🐮) {
+                // It's been set, but is shared with another style, so
+                // create a mutable copy to help keep COW semantics.
+                _paragraphStyle🐮 = _paragraphStyle🐮.mutableCopy()
             }
-            _paragraphStyle[keyPath: keyPath] = newValue
+            // else: it's been set but is not shared with another style so we
+            // don't need to do anything and can just modify it in place.
+            _paragraphStyle🐮.value[keyPath: keyPath] = newValue
         }
     }
 }
