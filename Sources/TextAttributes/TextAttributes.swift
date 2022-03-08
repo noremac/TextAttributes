@@ -42,7 +42,7 @@ public extension TextAttributes {
     /// - Parameters:
     ///   - attribute: The attribute.
     ///   - key: The key.
-    /// - Note: Prefer the type safe proprties. Only use this for instances
+    /// - Note: Prefer the type safe properties. Only use this for instances
     /// where Apple has added a new property that this library does not yet
     /// support.
 
@@ -66,9 +66,9 @@ public extension TextAttributes {
 
     var attributes: [NSAttributedString.Key: Any] {
         if let style = paragraphStyle {
-            var attributess = _attributes
-            attributess[.paragraphStyle] = style.copy()
-            return attributess
+            var attributes = _attributes
+            attributes[.paragraphStyle] = style.copy()
+            return attributes
         } else {
             return _attributes
         }
