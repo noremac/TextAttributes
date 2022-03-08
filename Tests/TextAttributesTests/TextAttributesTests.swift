@@ -3,7 +3,7 @@ import XCTest
 
 final class TextStyleTests: XCTestCase {
     func testParagraphStyleHasValueSemantics() {
-        var s1 = TextStyle()
+        var s1 = TextAttributes()
         s1.lineSpacing = 100
 
         var s2 = s1
@@ -18,7 +18,7 @@ final class TextStyleTests: XCTestCase {
     }
 
     func testParagraphStyleIsCopied() {
-        let style = TextStyle {
+        let style = TextAttributes {
             $0.lineSpacing = 10
         }
         let p1 = style.paragraphStyle!

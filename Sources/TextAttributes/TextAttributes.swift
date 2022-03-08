@@ -11,7 +11,7 @@ public typealias TextStyleColor = NSColor
 #endif
 
 @dynamicMemberLookup
-public struct TextStyle {
+public struct TextAttributes {
     static let defaultParagraphStyle = NSMutableParagraphStyle()
 
     var _paragraphStyle: NSMutableParagraphStyle!
@@ -22,20 +22,20 @@ public struct TextStyle {
 
     public init() {}
 
-    public init(_ builder: (inout TextStyle) -> Void) {
+    public init(_ builder: (inout TextAttributes) -> Void) {
         builder(&self)
     }
 }
 
 // MARK: Equatable
 
-extension TextStyle: Equatable {
-    public static func == (lhs: TextStyle, rhs: TextStyle) -> Bool {
+extension TextAttributes: Equatable {
+    public static func == (lhs: TextAttributes, rhs: TextAttributes) -> Bool {
         (lhs.attributes as NSDictionary).isEqual(to: rhs.attributes)
     }
 }
 
-public extension TextStyle {
+public extension TextAttributes {
     // MARK: Attributes
 
     /// Set the given attribute for the given key.
@@ -247,16 +247,16 @@ public extension TextStyle {
 // MARK: String
 
 public extension String {
-    func attributedString(withStyle style: TextStyle) -> NSAttributedString {
+    func attributedString(withStyle style: TextAttributes) -> NSAttributedString {
         NSAttributedString(string: self, attributes: style.attributes)
     }
 
-    func mutableAttributedString(withStyle style: TextStyle) -> NSMutableAttributedString {
+    func mutableAttributedString(withStyle style: TextAttributes) -> NSMutableAttributedString {
         NSMutableAttributedString(string: self, attributes: style.attributes)
     }
 }
 
-public extension TextStyle {
+public extension TextAttributes {
     func attributedString(from string: String) -> NSAttributedString {
         NSAttributedString(string: string, attributes: attributes)
     }
