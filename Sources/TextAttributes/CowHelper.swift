@@ -11,6 +11,7 @@ final class CowHelper<Value> {
 }
 
 extension CowHelper where Value: NSMutableCopying {
+    @inlinable
     func mutableCopy() -> Self {
         .init(value.mutableCopy(with: nil) as! Value)
     }

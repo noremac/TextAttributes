@@ -12,10 +12,13 @@ public typealias TextStyleColor = NSColor
 
 @dynamicMemberLookup
 public struct TextAttributes {
+    @usableFromInline
     static let defaultParagraphStyle = NSMutableParagraphStyle()
 
+    @usableFromInline
     var _paragraphStyle🐮: CowHelper<NSMutableParagraphStyle>!
 
+    @usableFromInline
     var _attributes: [NSAttributedString.Key: Any] = [:]
 
     // MARK: Initializers
@@ -45,11 +48,13 @@ public extension TextAttributes {
     /// - Note: Prefer the type safe properties. Only use this for instances
     /// where Apple has added a new property that this library does not yet
     /// support.
+    @inlinable
     mutating func setAttribute(_ attribute: Any?, forKey key: NSAttributedString.Key) {
         assert(key != .paragraphStyle, "Please use the paragraph style property")
         _attributes[key] = attribute
     }
 
+    @inlinable
     func attribute(forKey key: NSAttributedString.Key) -> Any? {
         if key == .paragraphStyle {
             return paragraphStyle
@@ -58,11 +63,13 @@ public extension TextAttributes {
         }
     }
 
+    @inlinable
     internal subscript<T>(key: NSAttributedString.Key) -> T? {
         get { _attributes[key] as? T }
         set { _attributes[key] = newValue }
     }
 
+    @inlinable
     var attributes: [NSAttributedString.Key: Any] {
         if let style = paragraphStyle {
             var attributes = _attributes
@@ -75,6 +82,7 @@ public extension TextAttributes {
 
     // MARK: Font
 
+    @inlinable
     var font: TextStyleFont? {
         get { self[.font] }
         set { self[.font] = newValue }
@@ -82,6 +90,7 @@ public extension TextAttributes {
 
     // MARK: Foreground color
 
+    @inlinable
     var foregroundColor: TextStyleColor? {
         get { self[.foregroundColor] }
         set { self[.foregroundColor] = newValue }
@@ -89,6 +98,7 @@ public extension TextAttributes {
 
     // MARK: Background color
 
+    @inlinable
     var backgroundColor: TextStyleColor? {
         get { self[.backgroundColor] }
         set { self[.backgroundColor] = newValue }
@@ -96,6 +106,7 @@ public extension TextAttributes {
 
     // MARK: Ligature
 
+    @inlinable
     var ligature: Int? {
         get { self[.ligature] }
         set { self[.ligature] = newValue }
@@ -103,6 +114,7 @@ public extension TextAttributes {
 
     // MARK: Kern
 
+    @inlinable
     var kern: CGFloat? {
         get { self[.kern] }
         set { self[.kern] = newValue }
@@ -110,6 +122,7 @@ public extension TextAttributes {
 
     // MARK: Strikethrough style
 
+    @inlinable
     var strikethroughStyle: NSUnderlineStyle? {
         get { self[.strikethroughStyle] }
         set { self[.strikethroughStyle] = newValue }
@@ -117,6 +130,7 @@ public extension TextAttributes {
 
     // MARK: Strikethrough color
 
+    @inlinable
     var strikethroughColor: TextStyleColor? {
         get { self[.strikethroughColor] }
         set { self[.strikethroughColor] = newValue }
@@ -124,6 +138,7 @@ public extension TextAttributes {
 
     // MARK: Underline style
 
+    @inlinable
     var underlineStyle: NSUnderlineStyle? {
         get { self[.underlineStyle] }
         set { self[.underlineStyle] = newValue }
@@ -131,6 +146,7 @@ public extension TextAttributes {
 
     // MARK: Underline color
 
+    @inlinable
     var underlineColor: TextStyleColor? {
         get { self[.underlineColor] }
         set { self[.underlineColor] = newValue }
@@ -138,6 +154,7 @@ public extension TextAttributes {
 
     // MARK: Stroke color
 
+    @inlinable
     var strokeColor: TextStyleColor? {
         get { self[.strokeColor] }
         set { self[.strokeColor] = newValue }
@@ -145,6 +162,7 @@ public extension TextAttributes {
 
     // MARK: Stroke width
 
+    @inlinable
     var strokeWidth: CGFloat? {
         get { self[.strokeWidth] }
         set { self[.strokeWidth] = newValue }
@@ -152,6 +170,7 @@ public extension TextAttributes {
 
     // MARK: Shadow
 
+    @inlinable
     var shadow: NSShadow? {
         get { self[.shadow] }
         set { self[.shadow] = newValue }
@@ -159,6 +178,7 @@ public extension TextAttributes {
 
     // MARK: Text effect
 
+    @inlinable
     var textEffect: NSAttributedString.TextEffectStyle? {
         get { self[.textEffect] }
         set { self[.textEffect] = newValue }
@@ -168,6 +188,7 @@ public extension TextAttributes {
 
     // MARK: Attachment
 
+    @inlinable
     var attachment: NSTextAttachment? {
         get { self[.attachment] }
         set { self[.attachment] = newValue }
@@ -176,6 +197,7 @@ public extension TextAttributes {
 
     // MARK: Link
 
+    @inlinable
     var link: URL? {
         get { self[.link] }
         set { self[.link] = newValue }
@@ -183,6 +205,7 @@ public extension TextAttributes {
 
     // MARK: Baseline offset
 
+    @inlinable
     var baselineOffset: CGFloat? {
         get { self[.baselineOffset] }
         set { self[.baselineOffset] = newValue }
@@ -190,6 +213,7 @@ public extension TextAttributes {
 
     // MARK: Obliqueness
 
+    @inlinable
     var obliqueness: CGFloat? {
         get { self[.obliqueness] }
         set { self[.obliqueness] = newValue }
@@ -197,6 +221,7 @@ public extension TextAttributes {
 
     // MARK: Expansion
 
+    @inlinable
     var expansion: CGFloat? {
         get { self[.expansion] }
         set { self[.expansion] = newValue }
@@ -204,6 +229,7 @@ public extension TextAttributes {
 
     // MARK: Writing direction
 
+    @inlinable
     var writingDirection: [NSWritingDirection]? {
         get { self[.writingDirection] }
         set { self[.writingDirection] = newValue }
@@ -211,6 +237,7 @@ public extension TextAttributes {
 
     // MARK: Vertical glyph form
 
+    @inlinable
     var verticalGlyphForm: Int? {
         get { self[.verticalGlyphForm] }
         set { self[.verticalGlyphForm] = newValue }
@@ -222,21 +249,23 @@ public extension TextAttributes {
     /// - Note: Prefer to use the specific properties on ``TextAttributes`` for
     /// manipulating the paragraph style attributes; this property will override
     /// those values.
+    @inlinable
     var paragraphStyle: NSParagraphStyle? {
-            get {
-                // Defensively copy out the value.
-                _paragraphStyle🐮?.value.copy() as? NSParagraphStyle
-            }
-            set {
-                if let value = newValue {
-                    // Defensively copy in the new value.
-                    _paragraphStyle🐮 = CowHelper(value.mutableCopy() as! NSMutableParagraphStyle)
-                } else {
-                    _paragraphStyle🐮 = nil
-                }
+        get {
+            // Defensively copy out the value.
+            _paragraphStyle🐮?.value.copy() as? NSParagraphStyle
+        }
+        set {
+            if let value = newValue {
+                // Defensively copy in the new value.
+                _paragraphStyle🐮 = CowHelper(value.mutableCopy() as! NSMutableParagraphStyle)
+            } else {
+                _paragraphStyle🐮 = nil
             }
         }
+    }
 
+    @inlinable
     subscript<T>(dynamicMember keyPath: WritableKeyPath<NSMutableParagraphStyle, T>) -> T {
         get {
             (_paragraphStyle🐮?.value ?? Self.defaultParagraphStyle)[keyPath: keyPath]
