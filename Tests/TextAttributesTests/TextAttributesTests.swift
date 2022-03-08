@@ -1,5 +1,5 @@
+import TextAttributes
 import XCTest
-@testable import TextStyle
 
 final class TextStyleTests: XCTestCase {
     func testParagraphStyleHasValueSemantics() {
