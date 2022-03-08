@@ -1,11 +1,11 @@
 #if canImport(UIKit)
 import UIKit
-public typealias TextStyleFont = UIFont
-public typealias TextStyleColor = UIColor
+public typealias TextAttributesFont = UIFont
+public typealias TextAttributesColor = UIColor
 #elseif canImport(AppKit)
 import AppKit
-public typealias TextStyleFont = NSFont
-public typealias TextStyleColor = NSColor
+public typealias TextAttributesFont = NSFont
+public typealias TextAttributesColor = NSColor
 #else
 #error("unsupported platform")
 #endif
@@ -83,7 +83,7 @@ public extension TextAttributes {
     // MARK: Font
 
     @inlinable
-    var font: TextStyleFont? {
+    var font: TextAttributesFont? {
         get { self[.font] }
         set { self[.font] = newValue }
     }
@@ -91,7 +91,7 @@ public extension TextAttributes {
     // MARK: Foreground color
 
     @inlinable
-    var foregroundColor: TextStyleColor? {
+    var foregroundColor: TextAttributesColor? {
         get { self[.foregroundColor] }
         set { self[.foregroundColor] = newValue }
     }
@@ -99,7 +99,7 @@ public extension TextAttributes {
     // MARK: Background color
 
     @inlinable
-    var backgroundColor: TextStyleColor? {
+    var backgroundColor: TextAttributesColor? {
         get { self[.backgroundColor] }
         set { self[.backgroundColor] = newValue }
     }
@@ -131,7 +131,7 @@ public extension TextAttributes {
     // MARK: Strikethrough color
 
     @inlinable
-    var strikethroughColor: TextStyleColor? {
+    var strikethroughColor: TextAttributesColor? {
         get { self[.strikethroughColor] }
         set { self[.strikethroughColor] = newValue }
     }
@@ -147,7 +147,7 @@ public extension TextAttributes {
     // MARK: Underline color
 
     @inlinable
-    var underlineColor: TextStyleColor? {
+    var underlineColor: TextAttributesColor? {
         get { self[.underlineColor] }
         set { self[.underlineColor] = newValue }
     }
@@ -155,7 +155,7 @@ public extension TextAttributes {
     // MARK: Stroke color
 
     @inlinable
-    var strokeColor: TextStyleColor? {
+    var strokeColor: TextAttributesColor? {
         get { self[.strokeColor] }
         set { self[.strokeColor] = newValue }
     }
